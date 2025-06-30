@@ -45,4 +45,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function templates()
+    {
+        return $this->hasMany(\App\Models\Template::class);
+    }
+
 }

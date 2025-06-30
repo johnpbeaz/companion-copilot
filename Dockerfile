@@ -1,6 +1,6 @@
 FROM php:8.3-cli
 
-# System dependencies
+# Install system packages
 RUN apt-get update && apt-get install -y \
     unzip \
     git \
@@ -8,6 +8,8 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     libzip-dev \
     zip \
+    nodejs \
+    npm \
     && docker-php-ext-install pdo_pgsql pgsql zip
 
 # Install Composer

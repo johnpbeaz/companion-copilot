@@ -4,11 +4,13 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8800:8000"
+      - "8800:8000"   # Laravel
+      - "5173:5173"   # Vite
     volumes:
       - .:/var/www/html
     depends_on:
       - db
+      - ollama
     working_dir: /var/www/html
     environment:
       DB_CONNECTION: pgsql
@@ -17,7 +19,12 @@ services:
       DB_DATABASE: copilot
       DB_USERNAME: postgres
       DB_PASSWORD: secret
-    command: php artisan serve --host=0.0.0.0 --port=8000
+    command: >
+      bash -c "composer install &&
+               php artisan key:generate &&
+               php artisan migrate &&
+               npm install &&
+               npm run dev & php artisan serve --host=0.0.0.0 --port=8000"
 
   db:
     image: postgres:14
@@ -31,5 +38,14 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    restart: unless-stopped
+
 volumes:
   pgdata:
+  ollama-data:
